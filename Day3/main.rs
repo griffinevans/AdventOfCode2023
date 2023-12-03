@@ -14,7 +14,7 @@ fn main() {
     let mut cur_line: &str = "";
     let mut next_line: &str = "";
 
-    let mut sum = 0;
+    let mut gear_ratios = 0;
     for i in 0..lines.len() {
         let prev_line = if i > 0 {
             lines[i - 1]
@@ -24,10 +24,11 @@ fn main() {
             lines[i + 1]
         } else { "" };
 
-        println!("Line is {}", cur_line);
         for (index, c) in cur_line.chars().enumerate() {
             // is symbol
             if c.is_ascii_punctuation() && c != '.' {
+                let mut count_adjacent = 0;
+                let mut sum = 1;
                 println!("found symbol {} in line {}", c, cur_line);
                 // check prev line
                 if !prev_line.is_empty() {
@@ -39,18 +40,21 @@ fn main() {
                     if mid.is_digit(10) {
                         let part_num = is_num(prev_line, index);
                         println!("upper: got num {}", part_num);
-                        sum += part_num;
+                        count_adjacent += 1;
+                        sum *= part_num;
                     } else {
                         if left.map_or(false, |c| c.is_digit(10)) {
                             let part_num = is_num(prev_line, index - 1);
                             println!("upper: got num {}", part_num);
-                            sum += part_num;
+                            count_adjacent += 1;
+                            sum *= part_num;
                         }
 
                         if right.map_or(false, |c| c.is_digit(10)) {
                             let part_num = is_num(prev_line, index + 1);
                             println!("upper: got num {}", part_num);
-                            sum += part_num;
+                            count_adjacent += 1;
+                            sum *= part_num;
                         }
 
                     }                    
@@ -65,18 +69,21 @@ fn main() {
                     if mid.is_digit(10) {
                         let part_num = is_num(next_line, index);
                         println!("upper: got num {}", part_num);
-                        sum += part_num;
+                        count_adjacent += 1;
+                        sum *= part_num;
                     } else {
                         if left.map_or(false, |c| c.is_digit(10)) {
                             let part_num = is_num(next_line, index - 1);
                             println!("upper: got num {}", part_num);
-                            sum += part_num;
+                            count_adjacent += 1;
+                            sum *= part_num;
                         }
 
                         if right.map_or(false, |c| c.is_digit(10)) {
                             let part_num = is_num(next_line, index + 1);
                             println!("upper: got num {}", part_num);
-                            sum += part_num;
+                            count_adjacent += 1;
+                            sum *= part_num;
                         }
 
                     }                    
@@ -86,7 +93,8 @@ fn main() {
                     if cur_line.chars().nth(index - 1).unwrap().is_digit(10) {
                         let part_num = is_num(cur_line, index - 1);
                         println!("left: got num {}", part_num);
-                        sum += part_num;
+                        count_adjacent += 1;
+                        sum *= part_num;
                     }
                 }
                 // check next chars
@@ -94,16 +102,20 @@ fn main() {
                     if cur_line.chars().nth(index + 1).unwrap().is_digit(10) {
                         let part_num = is_num(cur_line, index + 1);
                         println!("right: got num {}", part_num);
-                        sum += part_num;
+                        count_adjacent += 1;
+                        sum *= part_num;
                     }
+                }
+
+                println!("gear has adjacency {} and sum {}", count_adjacent, sum);
+                if count_adjacent == 2 {
+                    gear_ratios += sum;
                 }
             }
         }
 
     }
-    println!("sum is {}", sum);
-
-
+    println!("ratios is {}", gear_ratios);
 }
 
 fn read_file(file_path: &str) -> io::Result<String> {
