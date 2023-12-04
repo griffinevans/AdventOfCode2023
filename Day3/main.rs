@@ -29,7 +29,6 @@ fn main() {
             if c.is_ascii_punctuation() && c != '.' {
                 let mut count_adjacent = 0;
                 let mut sum = 1;
-                println!("found symbol {} in line {}", c, cur_line);
                 // check prev line
                 if !prev_line.is_empty() {
                     let left = prev_line.chars().nth(index.wrapping_sub(1));
@@ -39,20 +38,17 @@ fn main() {
                     // if mid is digit, left and right are digit if included
                     if mid.is_digit(10) {
                         let part_num = is_num(prev_line, index);
-                        println!("upper: got num {}", part_num);
                         count_adjacent += 1;
                         sum *= part_num;
                     } else {
                         if left.map_or(false, |c| c.is_digit(10)) {
                             let part_num = is_num(prev_line, index - 1);
-                            println!("upper: got num {}", part_num);
                             count_adjacent += 1;
                             sum *= part_num;
                         }
 
                         if right.map_or(false, |c| c.is_digit(10)) {
                             let part_num = is_num(prev_line, index + 1);
-                            println!("upper: got num {}", part_num);
                             count_adjacent += 1;
                             sum *= part_num;
                         }
@@ -68,20 +64,17 @@ fn main() {
                     // if mid is digit, left and right are digit if included
                     if mid.is_digit(10) {
                         let part_num = is_num(next_line, index);
-                        println!("upper: got num {}", part_num);
                         count_adjacent += 1;
                         sum *= part_num;
                     } else {
                         if left.map_or(false, |c| c.is_digit(10)) {
                             let part_num = is_num(next_line, index - 1);
-                            println!("upper: got num {}", part_num);
                             count_adjacent += 1;
                             sum *= part_num;
                         }
 
                         if right.map_or(false, |c| c.is_digit(10)) {
                             let part_num = is_num(next_line, index + 1);
-                            println!("upper: got num {}", part_num);
                             count_adjacent += 1;
                             sum *= part_num;
                         }
@@ -92,7 +85,6 @@ fn main() {
                 if index > 0 {
                     if cur_line.chars().nth(index - 1).unwrap().is_digit(10) {
                         let part_num = is_num(cur_line, index - 1);
-                        println!("left: got num {}", part_num);
                         count_adjacent += 1;
                         sum *= part_num;
                     }
@@ -101,13 +93,11 @@ fn main() {
                 if index < cur_line.len() - 1 {
                     if cur_line.chars().nth(index + 1).unwrap().is_digit(10) {
                         let part_num = is_num(cur_line, index + 1);
-                        println!("right: got num {}", part_num);
                         count_adjacent += 1;
                         sum *= part_num;
                     }
                 }
 
-                println!("gear has adjacency {} and sum {}", count_adjacent, sum);
                 if count_adjacent == 2 {
                     gear_ratios += sum;
                 }
@@ -115,7 +105,7 @@ fn main() {
         }
 
     }
-    println!("ratios is {}", gear_ratios);
+    println!("{}", gear_ratios);
 }
 
 fn read_file(file_path: &str) -> io::Result<String> {
@@ -142,7 +132,5 @@ fn is_num(s: &str, index: usize) -> usize {
     end -= 1;
 
     let num = &s[start..=end];
-    println!("num is {}", num);
-
     return num.parse().unwrap_or(0);
 }
