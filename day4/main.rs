@@ -19,8 +19,8 @@ fn main() {
         Err(_) => std::process::exit(1),
     };
 
-    let result = part2(&file_contents);
-    println!("{}", result);
+    println!("{}", part1(&file_contents));
+    println!("{}", part2(&file_contents));
 }
 
 fn part2(file_contents: &str) -> i32 {
