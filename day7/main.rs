@@ -90,7 +90,6 @@ fn part2(file_contents: &str) -> u64 {
 
     let mut sum: u64 = 0;
     for (i, play) in plays.iter().enumerate() {
-        println!("{:?}", play);
         let index = i as u64 + 1;
         sum += play.bet * index;
     }
@@ -140,7 +139,6 @@ fn part1(file_contents: &str) -> u64 {
 
     let mut sum: u64 = 0;
     for (i, play) in plays.iter().enumerate() {
-        println!("{:?}", play);
         let index = i as u64 + 1;
         sum += play.bet * index;
     }
