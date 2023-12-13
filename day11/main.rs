@@ -35,6 +35,20 @@ fn part1(file_contents: &str) -> usize {
 
     let mut galaxies: Vec<(usize, usize)> = Vec::new();
 
+    let mut gap_rows: Vec<usize> = Vec::new();
+    let mut gap_cols: Vec<usize> = Vec::new();
+
+    for i in 0..universe.len() {
+        if universe[i][0] == '!' {
+            gap_rows.push(i);
+        }
+    }
+    for i in 0..universe[0].len() {
+        if universe[0][i] == '!' {
+            gap_cols.push(i);
+        }
+    }
+
     for i in 0..universe.len() {
         for j in 0..universe[0].len() {
             if universe[i][j] == '#' {
@@ -49,9 +63,91 @@ fn part1(file_contents: &str) -> usize {
         for j in i+1..galaxies.len() {
             let inner = galaxies[j];
 
-            let x = (inner.0 as isize - outer.0 as isize).abs() as usize;
-            let y = (inner.1 as isize - outer.1 as isize).abs() as usize;
-            let distance = x + y;
+            let path_rows = if inner.0 < outer.0 { inner.0..outer.0 } else { outer.0..inner.0 };
+            let path_cols = if inner.1 < outer.1 { inner.1..outer.1 } else { outer.1..inner.1 };
+
+            let mut distance = 0;
+            for loc in path_rows.into_iter() {
+                if gap_cols.contains(&loc) {
+                    distance += 2;
+                } else {
+                    distance += 1;
+                }
+            }
+            for loc in path_cols.into_iter() {
+                if gap_rows.contains(&loc) {
+                    distance += 2;
+                } else {
+                    distance += 1;
+                }
+            }
+            sum += distance;
+        }
+    }
+
+    return sum;
+}
+
+fn part2(file_contents: &str) -> usize {
+    let mut universe: Vec<Vec<char>> = file_contents
+        .lines()
+        .map(|line| line.chars().collect())
+        .collect();
+
+    grow_universe(&mut universe);
+
+    for row in &universe {
+        println!("{:?}", row);
+    }
+
+    let mut galaxies: Vec<(usize, usize)> = Vec::new();
+
+    let mut gap_rows: Vec<usize> = Vec::new();
+    let mut gap_cols: Vec<usize> = Vec::new();
+
+    for i in 0..universe.len() {
+        if universe[i][0] == '!' {
+            gap_rows.push(i);
+        }
+    }
+    for i in 0..universe[0].len() {
+        if universe[0][i] == '!' {
+            gap_cols.push(i);
+        }
+    }
+    for i in 0..universe.len() {
+        for j in 0..universe[0].len() {
+            if universe[i][j] == '#' {
+                galaxies.push((i,j));
+            }
+        }
+    }
+    
+    let mut sum = 0;
+    for i in 0..galaxies.len() {
+        let outer = galaxies[i];
+        for j in i+1..galaxies.len() {
+            let inner = galaxies[j];
+
+            let path_rows = if inner.0 < outer.0 { inner.0..outer.0 } else { outer.0..inner.0 };
+            let path_cols = if inner.1 < outer.1 { inner.1..outer.1 } else { outer.1..inner.1 };
+
+            let mut distance = 0;
+            for loc in path_rows.into_iter() {
+                if gap_cols.contains(&loc) {
+                    distance += 10;
+                } else {
+                    distance += 1;
+                }
+            }
+            for loc in path_cols.into_iter() {
+                if gap_rows.contains(&loc) {
+                    distance += 10;
+                } else {
+                    distance += 1;
+                }
+            }
+            println!("distance from {} to {}: {}", i, j, distance);
             sum += distance;
         }
     }
@@ -61,39 +157,18 @@ fn part1(file_contents: &str) -> usize {
 
 fn grow_universe(universe: &mut Vec<Vec<char>>) {
 
-    let mut rows: Vec<(usize, Vec<char>)> = Vec::new();
-
     for i in 0..universe.len() {
         if !universe[i].contains(&'#') {
-            rows.push((i, universe[i].clone()));
+            universe[i].iter_mut().for_each(|c| *c = '!');
         }
     }
-
-    let mut off = 0;
-    for (i, row) in rows {
-        universe.insert(i + off, row);
-        off += 1;
-    }
-
-    let mut cols: Vec<(usize, Vec<char>)> = Vec::new();
 
     for i in 0..universe[0].len() {
         let column: Vec<char> = universe.iter().map(|row| row[i]).collect();
         if !column.contains(&'#') {
-            cols.push((i, column));
+            for row in universe.iter_mut() {
+                row[i] = '!';
+            }
         }
     }
-
-    let mut offset = 0;
-    for (loc, col) in cols {
-        for (row_index, row) in universe.iter_mut().enumerate() {
-            row.insert(loc + offset, col[row_index]);
-        }
-        offset += 1;
-    }
-
-}
-
-fn part2(_file_contents: &str) -> usize {
-    return 0;
 }
