@@ -96,25 +96,8 @@ fn part2(file_contents: &str) -> usize {
 
     grow_universe(&mut universe);
 
-    for row in &universe {
-        println!("{:?}", row);
-    }
-
     let mut galaxies: Vec<(usize, usize)> = Vec::new();
 
-    let mut gap_rows: Vec<usize> = Vec::new();
-    let mut gap_cols: Vec<usize> = Vec::new();
-
-    for i in 0..universe.len() {
-        if universe[i][0] == '!' {
-            gap_rows.push(i);
-        }
-    }
-    for i in 0..universe[0].len() {
-        if universe[0][i] == '!' {
-            gap_cols.push(i);
-        }
-    }
     for i in 0..universe.len() {
         for j in 0..universe[0].len() {
             if universe[i][j] == '#' {
@@ -122,6 +105,8 @@ fn part2(file_contents: &str) -> usize {
             }
         }
     }
+
+    let gap_value = 1_000_000;
     
     let mut sum = 0;
     for i in 0..galaxies.len() {
@@ -134,20 +119,19 @@ fn part2(file_contents: &str) -> usize {
 
             let mut distance = 0;
             for loc in path_rows.into_iter() {
-                if gap_cols.contains(&loc) {
-                    distance += 10;
+                if universe[loc][0] == '!' {
+                    distance += gap_value;
                 } else {
                     distance += 1;
                 }
             }
             for loc in path_cols.into_iter() {
-                if gap_rows.contains(&loc) {
-                    distance += 10;
+                if universe[0][loc] == '!' {
+                    distance += gap_value;
                 } else {
                     distance += 1;
                 }
             }
-            println!("distance from {} to {}: {}", i, j, distance);
             sum += distance;
         }
     }
