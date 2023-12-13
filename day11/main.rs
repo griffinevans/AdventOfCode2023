@@ -21,11 +21,6 @@ fn main() {
         Err(_) => std::process::exit(1),
     };
 
-    println!("{}", part1(&file_contents));
-    println!("{}", part2(&file_contents));
-}
-
-fn part1(file_contents: &str) -> usize {
     let mut universe: Vec<Vec<char>> = file_contents
         .lines()
         .map(|line| line.chars().collect())
@@ -33,69 +28,11 @@ fn part1(file_contents: &str) -> usize {
 
     grow_universe(&mut universe);
 
-    let mut galaxies: Vec<(usize, usize)> = Vec::new();
-
-    let mut gap_rows: Vec<usize> = Vec::new();
-    let mut gap_cols: Vec<usize> = Vec::new();
-
-    for i in 0..universe.len() {
-        if universe[i][0] == '!' {
-            gap_rows.push(i);
-        }
-    }
-    for i in 0..universe[0].len() {
-        if universe[0][i] == '!' {
-            gap_cols.push(i);
-        }
-    }
-
-    for i in 0..universe.len() {
-        for j in 0..universe[0].len() {
-            if universe[i][j] == '#' {
-                galaxies.push((i,j));
-            }
-        }
-    }
-    
-    let mut sum = 0;
-    for i in 0..galaxies.len() {
-        let outer = galaxies[i];
-        for j in i+1..galaxies.len() {
-            let inner = galaxies[j];
-
-            let path_rows = if inner.0 < outer.0 { inner.0..outer.0 } else { outer.0..inner.0 };
-            let path_cols = if inner.1 < outer.1 { inner.1..outer.1 } else { outer.1..inner.1 };
-
-            let mut distance = 0;
-            for loc in path_rows.into_iter() {
-                if gap_cols.contains(&loc) {
-                    distance += 2;
-                } else {
-                    distance += 1;
-                }
-            }
-            for loc in path_cols.into_iter() {
-                if gap_rows.contains(&loc) {
-                    distance += 2;
-                } else {
-                    distance += 1;
-                }
-            }
-            sum += distance;
-        }
-    }
-
-    return sum;
+    println!("{}", sum_shortest_paths(&universe, 2));
+    println!("{}", sum_shortest_paths(&universe, 1_000_000));
 }
 
-fn part2(file_contents: &str) -> usize {
-    let mut universe: Vec<Vec<char>> = file_contents
-        .lines()
-        .map(|line| line.chars().collect())
-        .collect();
-
-    grow_universe(&mut universe);
-
+fn sum_shortest_paths(universe: &Vec<Vec<char>>, gap_weight: usize) -> usize {
     let mut galaxies: Vec<(usize, usize)> = Vec::new();
 
     for i in 0..universe.len() {
@@ -105,8 +42,6 @@ fn part2(file_contents: &str) -> usize {
             }
         }
     }
-
-    let gap_value = 1_000_000;
     
     let mut sum = 0;
     for i in 0..galaxies.len() {
@@ -120,14 +55,14 @@ fn part2(file_contents: &str) -> usize {
             let mut distance = 0;
             for loc in path_rows.into_iter() {
                 if universe[loc][0] == '!' {
-                    distance += gap_value;
+                    distance += gap_weight;
                 } else {
                     distance += 1;
                 }
             }
             for loc in path_cols.into_iter() {
                 if universe[0][loc] == '!' {
-                    distance += gap_value;
+                    distance += gap_weight;
                 } else {
                     distance += 1;
                 }
