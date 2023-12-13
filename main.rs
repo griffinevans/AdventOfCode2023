@@ -1,7 +1,6 @@
 use std::env;
 use std::fs::File;
 use std::io::{self, Read};
-use std::collections::HashMap;
 
 fn read_file(file_path: &str) -> io::Result<String> {
     let mut file = File::open(file_path)?;
