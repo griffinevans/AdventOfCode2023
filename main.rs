@@ -22,13 +22,8 @@ fn main() {
     };
 
     println!("{}", part1(&file_contents));
-    println!("{}", part2(&file_contents));
 }
 
 fn part1(file_contents: &str) -> usize {
-    return 0;
-}
-
-fn part2(file_contents: &str) -> usize {
     return 0;
 }
